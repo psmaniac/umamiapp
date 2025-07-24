@@ -1,0 +1,131 @@
+.umami-logo {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  overflow: visible;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: all 0.4s ease;
+  background: rgba(255, 255, 255, 0.05);
+  animation: appear 0.6s ease-out forwards;
+}
+
+.restaurant-icon {
+  font-size: 2.2rem !important;
+  margin-right: 12px;
+  color: #4db6ac;
+  transition: all 0.4s ease;
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.umami-text {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.app-text {
+  color: #4db6ac;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+}
+
+.logo-animation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(77, 182, 172, 0.15), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.8s ease;
+  z-index: -1;
+  opacity: 0.7;
+  border-radius: 8px;
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes appear {
+  0% { opacity: 0; transform: translateX(-10px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+.umami-logo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.umami-logo:hover .restaurant-icon {
+  color: #80cbc4;
+  animation: float 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 5px rgba(128, 203, 196, 0.5));
+}
+
+.umami-logo:hover .umami-text {
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+.umami-logo:hover .app-text {
+  color: #80cbc4;
+  letter-spacing: 2.5px;
+}
+
+.umami-logo:hover .logo-animation {
+  transform: translateX(100%);
+}
+
+@media (max-width: 768px) {
+  .umami-logo {
+    padding: 4px 8px;
+  }
+  
+  .restaurant-icon {
+    font-size: 1.8rem !important;
+    margin-right: 8px;
+  }
+  
+  .umami-text {
+    font-size: 1.2rem;
+  }
+  
+  .app-text {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .umami-logo {
+    padding: 3px 6px;
+  }
+  
+  .restaurant-icon {
+    font-size: 1.5rem !important;
+    margin-right: 6px;
+  }
+  
+  .umami-text {
+    font-size: 1.1rem;
+  }
+  
+  .app-text {
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+  }
+}
