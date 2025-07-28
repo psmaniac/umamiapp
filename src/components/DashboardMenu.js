@@ -38,7 +38,6 @@ const DashboardContainer = styled('div')(({ theme }) => ({
   background: theme.palette.dashboard.background,
   padding: theme.spacing(0.5),
   boxSizing: 'border-box',
-  borderTop: `4px solid ${theme.palette.dashboard.borderTop}`,
 }));
 
 const DashboardContent = styled('div')(({ theme }) => ({

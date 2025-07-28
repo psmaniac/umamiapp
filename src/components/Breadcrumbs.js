@@ -15,15 +15,15 @@ import {
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const StyledBreadcrumbs = styled(MuiBreadcrumbs)(({ theme }) => ({
-  padding: theme.spacing(1, 2),
+  padding: theme.spacing(0.5, 1),
   backgroundColor: theme.palette.background.paper,
   borderRadius: theme.shape.borderRadius,
   boxShadow: theme.shadows[1],
-  marginLeft: theme.spacing(1),
+  marginLeft: theme.spacing(0.5),
   display: 'flex',
   alignItems: 'center',
   '& .MuiBreadcrumbs-separator': {
-    margin: theme.spacing(0, 1),
+    margin: theme.spacing(0, 0.5),
     color: theme.palette.text.secondary,
   },
 }));
@@ -33,7 +33,8 @@ const BreadcrumbLink = styled(Link)(({ theme }) => ({
   alignItems: 'center',
   color: theme.palette.primary.main,
   textDecoration: 'none',
-  fontWeight: 500,
+  fontWeight: 400,
+  fontSize: '0.8rem',
   '&:hover': {
     textDecoration: 'underline',
     color: theme.palette.primary.dark,
@@ -44,7 +45,8 @@ const BreadcrumbText = styled(Typography)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   color: theme.palette.text.primary,
-  fontWeight: 500,
+  fontWeight: 400,
+  fontSize: '0.8rem',
 }));
 
 const BackButton = styled(IconButton)(({ theme }) => ({
@@ -57,10 +59,11 @@ const BackButton = styled(IconButton)(({ theme }) => ({
 }));
 
 const BreadcrumbsContainer = styled(Box)(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
+  padding: theme.spacing(0.5, 1),
   display: 'flex',
   alignItems: 'center',
   width: '100%',
-  marginBottom: theme.spacing(2),
 }));
 
 const Breadcrumbs = () => {
@@ -84,7 +87,7 @@ const Breadcrumbs = () => {
           onClick={() => navigate('/')}
           sx={{ cursor: 'pointer' }}
         >
-          <HomeIcon sx={{ mr: 0.5, fontSize: 20 }} />
+          <HomeIcon sx={{ mr: 0.5, fontSize: 16 }} />
           Home
         </BreadcrumbLink>
         {pathnames.map((name, index) => {

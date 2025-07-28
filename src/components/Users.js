@@ -41,8 +41,7 @@ import {
   AssignmentInd as SystemRoleIcon,
   ToggleOn as StatusIcon,
 } from '@mui/icons-material';
-import initialUsers from '../data/users';
-import Breadcrumbs from './Breadcrumbs'; 
+import initialUsers from '../data/users'; 
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   margin: theme.spacing(3),
@@ -175,7 +174,6 @@ const Users = () => {
 
   return (
     <StyledPaper>
-      <Breadcrumbs />  
       <Header>
         <Typography variant="h5">Gestión de Usuarios</Typography>
         <Button

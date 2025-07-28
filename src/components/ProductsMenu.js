@@ -15,7 +15,6 @@ import {
 } from '@mui/icons-material';
 import { keyframes } from '@emotion/react';
 import { Link } from 'react-router-dom';
-import Breadcrumbs from './Breadcrumbs';
 
 // Animación fadeIn
 const fadeIn = keyframes`
@@ -37,7 +36,6 @@ const ProductsContainer = styled('div')(({ theme }) => ({
   background: theme.palette.dashboard.background,
   padding: theme.spacing(0.5),
   boxSizing: 'border-box',
-  borderTop: `4px solid ${theme.palette.dashboard.borderTop}`,
 }));
 
 const ProductsContent = styled('div')(({ theme }) => ({
@@ -134,7 +132,6 @@ const ProductsMenu = () => {
 
   return (
     <>
-      <Breadcrumbs />
       <ProductsContainer>
         <ProductsContent>
           <Typography 
@@ -176,7 +173,7 @@ const ProductsMenu = () => {
             <Grid 
               container 
               spacing={isSmallScreen ? 2 : 4} 
-              justifyContent="flex-start"
+              justifyContent="center"
               alignItems="center"
               sx={{ 
                 maxWidth: '800px',
@@ -188,6 +185,7 @@ const ProductsMenu = () => {
                     aspectRatio: '1/1',
                     maxWidth: isSmallScreen ? 140 : 180,
                     minWidth: isSmallScreen ? 140 : 180,
+                    margin: '0 auto',
                   }}>
                   <MenuItem
                     component={Link}

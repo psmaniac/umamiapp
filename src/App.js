@@ -1,17 +1,32 @@
 import React from 'react';
 import { ThemeProvider, CssBaseline } from '@mui/material';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
 import DashboardMenu from './components/DashboardMenu';
 import Header from './Header';
 import Login from './Login';
 import Users from './components/Users';
 import ProductsMenu from './components/ProductsMenu';
+import Breadcrumbs from './components/Breadcrumbs';
 import { lightTheme, darkTheme } from './theme';
 import { AuthProvider, useAuth } from './AuthContext';
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? children : <Navigate to="/login" replace />;
+}
+
+// Layout principal con Header y Breadcrumbs condicional
+function MainLayout({ darkMode, toggleDarkMode }) {
+  const location = useLocation();
+  const showBreadcrumbs = location.pathname === '/users' || location.pathname === '/products' || location.pathname === '/';
+
+  return (
+    <>
+      <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      {showBreadcrumbs && <Breadcrumbs />}
+      <Outlet />
+    </>
+  );
 }
 
 function AppContent() {
@@ -24,31 +39,21 @@ function AppContent() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={
-            <ProtectedRoute>
-              <>
-                <Header darkMode={darkMode} toggleDarkMode={() => setDarkMode(!darkMode)} />
-                <DashboardMenu />
-              </>
-            </ProtectedRoute>
-          } />
-          <Route path="/users" element={
-            <ProtectedRoute>
-              <>
-                <Header darkMode={darkMode} toggleDarkMode={() => setDarkMode(!darkMode)} />
-                <Users />
-              </>
-            </ProtectedRoute>
-          } />
-          <Route path="/products" element={
-            <ProtectedRoute>
-              <>
-                <Header darkMode={darkMode} toggleDarkMode={() => setDarkMode(!darkMode)} />
-                <ProductsMenu />
-              </>
-            </ProtectedRoute>
-          } />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route 
+            path="/*" 
+            element={
+              <ProtectedRoute>
+                <Routes>
+                  <Route element={<MainLayout darkMode={darkMode} toggleDarkMode={() => setDarkMode(!darkMode)} />}>
+                    <Route index element={<DashboardMenu />} />
+                    <Route path="users" element={<Users />} />
+                    <Route path="products" element={<ProductsMenu />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Route>
+                </Routes>
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Router>
     </ThemeProvider>
