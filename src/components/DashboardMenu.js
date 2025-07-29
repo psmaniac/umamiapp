@@ -13,6 +13,7 @@ import {
   Receipt as BillingIcon,
   Inventory as WarehouseIcon,
   Fastfood as ProductsIcon,
+  AccountBalanceWallet as AccountingIcon,
   Settings as SettingsIcon
 } from '@mui/icons-material';
 import { keyframes } from '@emotion/react';
@@ -130,8 +131,9 @@ const DashboardMenu = () => {
     { id: 2, name: 'Pedidos', icon: <OrdersIcon />, path: '/orders' },
     { id: 3, name: 'Facturación', icon: <BillingIcon />, path: '/billing' },
     { id: 4, name: 'Almacenes', icon: <WarehouseIcon />, path: '/warehouse' },
-    { id: 5, name: 'Productos', icon: <ProductsIcon />, path: '/products' }, 
-    { id: 6, name: 'Configuración', icon: <SettingsIcon />, path: '/settings' },
+    { id: 5, name: 'Productos', icon: <ProductsIcon />, path: '/products' },
+    { id: 6, name: 'Contabilidad', icon: <AccountingIcon />, path: '/accounting' },
+    { id: 7, name: 'Configuración', icon: <SettingsIcon />, path: '/settings' },
   ];
 
   return (

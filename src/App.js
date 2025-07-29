@@ -6,6 +6,11 @@ import Header from './Header';
 import Login from './Login';
 import Users from './components/Users';
 import ProductsMenu from './components/ProductsMenu';
+import Orders from './components/Orders';
+import Billing from './components/Billing';
+import Warehouse from './components/Warehouse';
+import Accounting from './components/Accounting';
+import Settings from './components/Settings';
 import Breadcrumbs from './components/Breadcrumbs';
 import { lightTheme, darkTheme } from './theme';
 import { AuthProvider, useAuth } from './AuthContext';
@@ -18,7 +23,7 @@ function ProtectedRoute({ children }) {
 // Layout principal con Header y Breadcrumbs condicional
 function MainLayout({ darkMode, toggleDarkMode }) {
   const location = useLocation();
-  const showBreadcrumbs = location.pathname === '/users' || location.pathname === '/products' || location.pathname === '/';
+  const showBreadcrumbs = location.pathname !== '/' && location.pathname !== '/login';
 
   return (
     <>
@@ -48,6 +53,11 @@ function AppContent() {
                     <Route index element={<DashboardMenu />} />
                     <Route path="users" element={<Users />} />
                     <Route path="products" element={<ProductsMenu />} />
+                    <Route path="orders" element={<Orders />} />
+                    <Route path="billing" element={<Billing />} />
+                    <Route path="warehouse" element={<Warehouse />} />
+                    <Route path="accounting" element={<Accounting />} />
+                    <Route path="settings" element={<Settings />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Route>
                 </Routes>
