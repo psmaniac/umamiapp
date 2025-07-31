@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Box, 
   Typography, 
@@ -11,8 +11,7 @@ import {
   TableRow, 
   Paper, 
   IconButton, 
-  Tooltip, 
-  Chip,
+  Tooltip,
   styled
 } from '@mui/material';
 import { 
@@ -21,8 +20,11 @@ import {
   Delete as DeleteIcon, 
   Warning as WarningIcon 
 } from '@mui/icons-material';
-import { warehouseItems } from '../data/warehouseItems';
-import WarehouseItemModal from './warehouse/WarehouseItemModal';
+import { warehouseItems } from '../../data/warehouseItems.js';
+import WarehouseItemModal from './WarehouseItemModal.js';
+
+import { useLocalCRUD } from '../../hooks/useLocalCRUD';
+import { useModal } from '../../hooks/useModal';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   margin: theme.spacing(3),
@@ -53,31 +55,20 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const Warehouse = () => {
-  const [items, setItems] = useState(warehouseItems);
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
-
-  const handleOpenModal = (item = null) => {
-    setSelectedItem(item);
-    setModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedItem(null);
-    setModalOpen(false);
-  };
+  const { documents: items, add, update, remove } = useLocalCRUD(warehouseItems);
+  const { isOpen, selectedItem, handleOpen, handleClose } = useModal();
 
   const handleSaveItem = (item) => {
-    const isNewItem = !items.find(i => i.id === item.id);
-    if (isNewItem) {
-      setItems([item, ...items]);
+    if (item.id) {
+      update(item.id, item);
     } else {
-      setItems(items.map(i => i.id === item.id ? item : i));
+      add({ ...item, id: new Date().getTime() });
     }
+    handleClose();
   };
 
   const handleDeleteItem = (id) => {
-    setItems(items.filter(item => item.id !== id));
+    remove(id);
   };
 
   return (
@@ -88,7 +79,7 @@ const Warehouse = () => {
           variant="contained"
           color="primary"
           startIcon={<AddIcon />}
-          onClick={() => handleOpenModal()}
+          onClick={() => handleOpen()}
         >
           Añadir Artículo
         </Button>
@@ -123,7 +114,7 @@ const Warehouse = () => {
                 <TableCell align="right">{item.minStock}</TableCell>
                 <TableCell align="center">
                   <Tooltip title="Editar Artículo">
-                    <IconButton onClick={() => handleOpenModal(item)} color="secondary">
+                    <IconButton onClick={() => handleOpen(item)} color="secondary">
                       <EditIcon />
                     </IconButton>
                   </Tooltip>
@@ -140,8 +131,8 @@ const Warehouse = () => {
       </TableContainer>
 
       <WarehouseItemModal
-        open={isModalOpen}
-        onClose={handleCloseModal}
+        open={isOpen}
+        onClose={handleClose}
         onSave={handleSaveItem}
         item={selectedItem}
       />

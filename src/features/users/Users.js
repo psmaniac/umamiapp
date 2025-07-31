@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Button, 
-  Typography, 
-  Paper, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
-  TableRow, 
+import React, { useState } from 'react';
+import {
+  Box,
+  Button,
+  Typography,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   TablePagination,
   IconButton,
   TextField,
@@ -26,7 +26,7 @@ import {
   Alert,
   InputAdornment,
 } from '@mui/material';
-import { 
+import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
@@ -41,7 +41,10 @@ import {
   AssignmentInd as SystemRoleIcon,
   ToggleOn as StatusIcon,
 } from '@mui/icons-material';
-import initialUsers from '../data/users'; 
+
+import { useCRUD } from '../../hooks/useCRUD';
+import { useModal } from '../../hooks/useModal';
+import { useSnackbar } from '../../hooks/useSnackbar';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   margin: theme.spacing(3),
@@ -86,24 +89,12 @@ const StatusInactive = styled('span')(({ theme }) => ({
 }));
 
 const Users = () => {
-  const [users, setUsers] = useState([]);
+  const { documents: users, add, update, remove } = useCRUD('users');
+  const { isOpen, selectedItem: currentUser, handleOpen, handleClose } = useModal();
+  const { snackbar, showSnackbar, handleCloseSnackbar } = useSnackbar();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [open, setOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
-
-  // Cargar usuarios desde localStorage o datos iniciales
-  useEffect(() => {
-    const storedUsers = localStorage.getItem('umamiUsers');
-    if (storedUsers) {
-      setUsers(JSON.parse(storedUsers));
-    } else {
-      setUsers(initialUsers);
-      localStorage.setItem('umamiUsers', JSON.stringify(initialUsers));
-    }
-  }, []);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -114,29 +105,15 @@ const Users = () => {
     setPage(0);
   };
 
-  const handleOpen = (user = null) => {
-    setCurrentUser(user);
-    setOpen(true);
+  const handleDelete = async (id) => {
+    await remove(id);
+    showSnackbar('Usuario eliminado correctamente', 'success');
   };
 
-  const handleClose = () => {
-    setOpen(false);
-    setCurrentUser(null);
-    setShowPassword(false);
-  };
-
-  const handleDelete = (id) => {
-    const updatedUsers = users.filter(user => user.id !== id);
-    setUsers(updatedUsers);
-    localStorage.setItem('umamiUsers', JSON.stringify(updatedUsers));
-    setSnackbar({ open: true, message: 'Usuario eliminado correctamente', severity: 'success' });
-  };
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const userData = {
-      id: currentUser ? currentUser.id : Date.now(),
       username: formData.get('username'),
       password: formData.get('password'),
       name: formData.get('name'),
@@ -144,28 +121,17 @@ const Users = () => {
       role: formData.get('role'),
       restaurantRole: formData.get('restaurantRole'),
       status: formData.get('status'),
-      createdAt: currentUser ? currentUser.createdAt : new Date().toISOString().split('T')[0],
+      createdAt: currentUser?.createdAt || new Date().toISOString().split('T')[0],
     };
 
-    let updatedUsers;
     if (currentUser) {
-      updatedUsers = users.map(user => user.id === currentUser.id ? userData : user);
+      await update(currentUser.id, userData);
+      showSnackbar('Usuario actualizado correctamente', 'success');
     } else {
-      updatedUsers = [...users, userData];
+      await add(userData);
+      showSnackbar('Usuario creado correctamente', 'success');
     }
-
-    setUsers(updatedUsers);
-    localStorage.setItem('umamiUsers', JSON.stringify(updatedUsers));
     handleClose();
-    setSnackbar({ 
-      open: true, 
-      message: `Usuario ${currentUser ? 'actualizado' : 'creado'} correctamente`, 
-      severity: 'success' 
-    });
-  };
-
-  const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
   };
 
   const togglePasswordVisibility = () => {
@@ -225,7 +191,7 @@ const Users = () => {
                       <StatusInactive>Inactivo</StatusInactive>
                     )}
                   </TableCell>
-                  <TableCell>{user.createdAt}</TableCell>
+                  <TableCell>{user.createdAt && user.createdAt.toDate ? user.createdAt.toDate().toISOString().split('T')[0] : user.createdAt}</TableCell>
                   <TableCell>
                     <IconButton color="primary" onClick={() => handleOpen(user)}>
                       <EditIcon />
@@ -251,7 +217,7 @@ const Users = () => {
       />
 
       {/* Modal de creación/edición */}
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+      <Dialog open={isOpen} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle sx={{ 
           bgcolor: 'primary.main', 
           color: 'primary.contrastText',

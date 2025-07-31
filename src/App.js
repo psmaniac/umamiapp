@@ -1,19 +1,19 @@
 import React from 'react';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
-import DashboardMenu from './components/DashboardMenu';
-import Header from './Header';
-import Login from './Login';
-import Users from './components/Users';
-import ProductsMenu from './components/ProductsMenu';
-import Orders from './components/Orders';
-import Billing from './components/Billing';
-import Warehouse from './components/Warehouse';
-import Accounting from './components/Accounting';
-import Settings from './components/Settings';
-import Breadcrumbs from './components/Breadcrumbs';
-import { lightTheme, darkTheme } from './theme';
-import { AuthProvider, useAuth } from './AuthContext';
+import DashboardMenu from './components/layout/DashboardMenu.js';
+import Header from './components/layout/Header.js';
+import Login from './pages/LoginPage.js';
+import Users from './features/users/Users.js';
+import Products from './features/products/Products.js';
+import Orders from './features/orders/Orders.js';
+import Billing from './features/billing/Billing.js';
+import Warehouse from './features/warehouse/Warehouse.js';
+import Accounting from './features/accounting/Accounting.js';
+import Settings from './features/settings/Settings.js';
+import Breadcrumbs from './components/common/Breadcrumbs.js';
+import { lightTheme, darkTheme } from './styles/theme.js';
+import { AuthProvider, useAuth } from './context/AuthContext.js';
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuth();
@@ -52,7 +52,7 @@ function AppContent() {
                   <Route element={<MainLayout darkMode={darkMode} toggleDarkMode={() => setDarkMode(!darkMode)} />}>
                     <Route index element={<DashboardMenu />} />
                     <Route path="users" element={<Users />} />
-                    <Route path="products" element={<ProductsMenu />} />
+                    <Route path="products/*" element={<Products />} />
                     <Route path="orders" element={<Orders />} />
                     <Route path="billing" element={<Billing />} />
                     <Route path="warehouse" element={<Warehouse />} />

@@ -1,31 +1,34 @@
 import React, { useState, useMemo } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Button, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
-  TableRow, 
-  Paper, 
-  Chip, 
-  TextField, 
-  IconButton, 
+import {
+  Box,
+  Typography,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Chip,
+  TextField,
+  IconButton,
   Tooltip,
   styled
 } from '@mui/material';
-import { 
-  AddCircleOutline as AddIcon, 
-  PictureAsPdf as PdfIcon, 
-  Edit as EditIcon, 
-  Delete as DeleteIcon 
+import {
+  AddCircleOutline as AddIcon,
+  PictureAsPdf as PdfIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon
 } from '@mui/icons-material';
-import { accountingEntries } from '../data/accountingEntries';
-import AccountingEntryModal from './accounting/AccountingEntryModal';
+import { accountingEntries } from '../../data/accountingEntries.js';
+import AccountingEntryModal from './AccountingEntryModal.js';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+
+import { useLocalCRUD } from '../../hooks/useLocalCRUD';
+import { useModal } from '../../hooks/useModal';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   margin: theme.spacing(3),
@@ -56,13 +59,12 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const Accounting = () => {
+  const { documents: entries, add, update, remove } = useLocalCRUD(accountingEntries);
+  const { isOpen, selectedItem: selectedEntry, handleOpen, handleClose } = useModal();
   const [searchTerm, setSearchTerm] = useState('');
-  const [entries, setEntries] = useState(accountingEntries);
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [selectedEntry, setSelectedEntry] = useState(null);
 
   const filteredEntries = useMemo(() => {
-    return entries.filter(entry => 
+    return entries.filter(entry =>
       entry.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       entry.type.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -78,27 +80,17 @@ const Accounting = () => {
                   .reduce((sum, entry) => sum + entry.amount, 0);
   }, [entries]);
 
-  const handleOpenModal = (entry = null) => {
-    setSelectedEntry(entry);
-    setModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedEntry(null);
-    setModalOpen(false);
-  };
-
   const handleSaveEntry = (entry) => {
-    const isNewEntry = !entries.find(e => e.id === entry.id);
-    if (isNewEntry) {
-      setEntries([entry, ...entries]);
+    if (entry.id) {
+      update(entry.id, entry);
     } else {
-      setEntries(entries.map(e => e.id === entry.id ? entry : e));
+      add({ ...entry, id: new Date().getTime() });
     }
+    handleClose();
   };
 
   const handleDeleteEntry = (id) => {
-    setEntries(entries.filter(entry => entry.id !== id));
+    remove(id);
   };
 
   const handleGenerateReport = () => {
@@ -117,7 +109,7 @@ const Accounting = () => {
         entry.date,
         entry.type,
         entry.description,
-        `${entry.type === 'Ingreso' ? '+' : '-'}${Math.abs(entry.amount).toFixed(2)}`,
+        `${entry.type === 'Ingreso' ? '+' : '-'}Bs ${Math.abs(entry.amount).toFixed(2)}`,
       ];
       tableRows.push(entryData);
     });
@@ -129,9 +121,9 @@ const Accounting = () => {
       margin: { top: 10, right: 10, bottom: 10, left: 10 },
     });
 
-    doc.text(`Ingresos Totales: ${totalIncome.toFixed(2)}`, 14, doc.autoTable.previous.finalY + 10);
-    doc.text(`Gastos Totales: ${Math.abs(totalExpense).toFixed(2)}`, 14, doc.autoTable.previous.finalY + 17);
-    doc.text(`Balance: ${(totalIncome + totalExpense).toFixed(2)}`, 14, doc.autoTable.previous.finalY + 24);
+    doc.text(`Ingresos Totales: Bs ${totalIncome.toFixed(2)}`, 14, doc.autoTable.previous.finalY + 10);
+    doc.text(`Gastos Totales: Bs ${Math.abs(totalExpense).toFixed(2)}`, 14, doc.autoTable.previous.finalY + 17);
+    doc.text(`Balance: Bs ${(totalIncome + totalExpense).toFixed(2)}`, 14, doc.autoTable.previous.finalY + 24);
 
     doc.save('reporte_contable.pdf');
   };
@@ -145,7 +137,7 @@ const Accounting = () => {
             variant="contained"
             color="primary"
             startIcon={<AddIcon />}
-            onClick={() => handleOpenModal()}
+            onClick={() => handleOpen()}
             sx={{ mr: 2 }}
           >
             Añadir Registro
@@ -164,15 +156,15 @@ const Accounting = () => {
       <Paper elevation={3} sx={{ p: 2, mb: 3, display: 'flex', justifyContent: 'space-around' }}>
         <Box sx={{ textAlign: 'center' }}>
           <Typography variant="h6" color="success.main">Ingresos Totales</Typography>
-          <Typography variant="h5">${totalIncome.toFixed(2)}</Typography>
+          <Typography variant="h5">Bs {totalIncome.toFixed(2)}</Typography>
         </Box>
         <Box sx={{ textAlign: 'center' }}>
           <Typography variant="h6" color="error.main">Gastos Totales</Typography>
-          <Typography variant="h5">${Math.abs(totalExpense).toFixed(2)}</Typography>
+          <Typography variant="h5">Bs {Math.abs(totalExpense).toFixed(2)}</Typography>
         </Box>
         <Box sx={{ textAlign: 'center' }}>
           <Typography variant="h6" color="primary.main">Balance</Typography>
-          <Typography variant="h5">${(totalIncome + totalExpense).toFixed(2)}</Typography>
+          <Typography variant="h5">Bs {(totalIncome + totalExpense).toFixed(2)}</Typography>
         </Box>
       </Paper>
 
@@ -207,19 +199,19 @@ const Accounting = () => {
                 <TableCell>{entry.id}</TableCell>
                 <TableCell>{entry.date}</TableCell>
                 <TableCell>
-                  <Chip 
-                    label={entry.type} 
-                    color={entry.type === 'Ingreso' ? 'success' : 'error'} 
-                    size="small" 
+                  <Chip
+                    label={entry.type}
+                    color={entry.type === 'Ingreso' ? 'success' : 'error'}
+                    size="small"
                   />
                 </TableCell>
                 <TableCell>{entry.description}</TableCell>
                 <TableCell align="right" sx={{ color: entry.type === 'Ingreso' ? 'success.main' : 'error.main' }}>
-                  {entry.type === 'Ingreso' ? '+' : '-'}${Math.abs(entry.amount).toFixed(2)}
+                  {entry.type === 'Ingreso' ? '+' : '-'}Bs {Math.abs(entry.amount).toFixed(2)}
                 </TableCell>
                 <TableCell align="center">
                   <Tooltip title="Editar Registro">
-                    <IconButton onClick={() => handleOpenModal(entry)} color="secondary">
+                    <IconButton onClick={() => handleOpen(entry)} color="secondary">
                       <EditIcon />
                     </IconButton>
                   </Tooltip>
@@ -236,8 +228,8 @@ const Accounting = () => {
       </TableContainer>
 
       <AccountingEntryModal
-        open={isModalOpen}
-        onClose={handleCloseModal}
+        open={isOpen}
+        onClose={handleClose}
         onSave={handleSaveEntry}
         entry={selectedEntry}
       />

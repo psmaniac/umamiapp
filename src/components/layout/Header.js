@@ -23,8 +23,8 @@ import {
   Brightness7 as LightModeIcon,
   Restaurant as RestaurantIcon
 } from '@mui/icons-material';
-import { useAuth } from './AuthContext';
-import Logo from './Logo';
+import { useAuth } from '../../context/AuthContext.js';
+import Logo from '../common/Logo.js';
 
 // Componentes estilizados
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({

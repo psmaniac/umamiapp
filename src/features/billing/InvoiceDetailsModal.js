@@ -49,7 +49,7 @@ const InvoiceDetailsModal = ({ open, onClose, invoice }) => {
           </Grid>
           {/* Aquí podrías añadir los ítems de la factura si los tuvieras en los datos de ejemplo */}
           <Grid item xs={12} sx={{ textAlign: 'right', mt: 2 }}>
-            <Typography variant="h5" component="p">Total: ${invoice.total.toFixed(2)}</Typography>
+            <Typography variant="h5" component="p">Total: Bs {invoice.total.toFixed(2)}</Typography>
           </Grid>
         </Grid>
       </DialogContent>

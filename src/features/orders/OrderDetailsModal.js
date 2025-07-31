@@ -1,14 +1,14 @@
 import React from 'react';
-import { 
-  Dialog, 
-  DialogTitle, 
-  DialogContent, 
-  DialogActions, 
-  Button, 
-  Typography, 
-  Grid, 
-  Chip, 
-  Divider 
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography,
+  Grid,
+  Chip,
+  Divider
 } from '@mui/material';
 
 const OrderDetailsModal = ({ open, onClose, order }) => {
@@ -57,13 +57,13 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
                   <Typography>{item.name} x {item.quantity}</Typography>
                 </Grid>
                 <Grid item>
-                  <Typography>${(item.price * item.quantity).toFixed(2)}</Typography>
+                  <Typography>Bs {(item.price * item.quantity).toFixed(2)}</Typography>
                 </Grid>
               </Grid>
             ))}
           </Grid>
           <Grid item xs={12} sx={{ textAlign: 'right', mt: 2 }}>
-            <Typography variant="h5" component="p">Total: ${order.total.toFixed(2)}</Typography>
+            <Typography variant="h5" component="p">Total: Bs {order.total.toFixed(2)}</Typography>
           </Grid>
         </Grid>
       </DialogContent>

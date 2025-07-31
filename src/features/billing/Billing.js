@@ -1,30 +1,33 @@
-import React, { useState } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Button, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
-  TableRow, 
-  Paper, 
-  IconButton, 
-  Tooltip, 
-  Chip, 
+import React, { useState, useMemo } from 'react';
+import {
+  Box,
+  Typography,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  Tooltip,
+  Chip,
   TextField,
   styled
 } from '@mui/material';
-import { 
-  PictureAsPdf as PdfIcon, 
-  Search as SearchIcon, 
-  Visibility as ViewIcon 
+import {
+  PictureAsPdf as PdfIcon,
+  Search as SearchIcon,
+  Visibility as ViewIcon
 } from '@mui/icons-material';
-import { invoices } from '../data/invoices';
-import InvoiceDetailsModal from './billing/InvoiceDetailsModal';
+import { invoices } from '../../data/invoices.js';
+import InvoiceDetailsModal from './InvoiceDetailsModal.js';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+
+import { useLocalCRUD } from '../../hooks/useLocalCRUD';
+import { useModal } from '../../hooks/useModal';
 
 const getStatusChipColor = (status) => {
   switch (status) {
@@ -68,16 +71,15 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const Billing = () => {
+  const { documents: filteredInvoices, setDocuments: setFilteredInvoices } = useLocalCRUD(invoices);
+  const { isOpen, selectedItem: selectedInvoice, handleOpen, handleClose } = useModal();
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredInvoices, setFilteredInvoices] = useState(invoices);
-  const [isDetailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [selectedInvoice, setSelectedInvoice] = useState(null);
 
   const handleSearch = (event) => {
     const term = event.target.value.toLowerCase();
     setSearchTerm(term);
-    const filtered = invoices.filter(invoice => 
-      invoice.id.toLowerCase().includes(term) || 
+    const filtered = invoices.filter(invoice =>
+      invoice.id.toLowerCase().includes(term) ||
       invoice.customerName.toLowerCase().includes(term)
     );
     setFilteredInvoices(filtered);
@@ -99,7 +101,7 @@ const Billing = () => {
         invoice.customerName,
         invoice.date,
         invoice.status,
-        `${invoice.total.toFixed(2)}`,
+        `Bs ${invoice.total.toFixed(2)}`,
       ];
       tableRows.push(invoiceData);
     });
@@ -112,16 +114,6 @@ const Billing = () => {
     });
 
     doc.save('reporte_facturacion.pdf');
-  };
-
-  const handleOpenDetailsModal = (invoice) => {
-    setSelectedInvoice(invoice);
-    setDetailsModalOpen(true);
-  };
-
-  const handleCloseDetailsModal = () => {
-    setSelectedInvoice(null);
-    setDetailsModalOpen(false);
   };
 
   return (
@@ -172,10 +164,10 @@ const Billing = () => {
                 <TableCell>
                   <Chip label={invoice.status} color={getStatusChipColor(invoice.status)} size="small" />
                 </TableCell>
-                <TableCell align="right">{`${invoice.total.toFixed(2)}`}</TableCell>
+                <TableCell align="right">{`Bs ${invoice.total.toFixed(2)}`}</TableCell>
                 <TableCell align="center">
                   <Tooltip title="Ver Factura">
-                    <IconButton onClick={() => handleOpenDetailsModal(invoice)} color="primary">
+                    <IconButton onClick={() => handleOpen(invoice)} color="primary">
                       <ViewIcon />
                     </IconButton>
                   </Tooltip>
@@ -187,8 +179,8 @@ const Billing = () => {
       </TableContainer>
 
       <InvoiceDetailsModal
-        open={isDetailsModalOpen}
-        onClose={handleCloseDetailsModal}
+        open={isOpen}
+        onClose={handleClose}
         invoice={selectedInvoice}
       />
     </StyledPaper>

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Dialog, 
-  DialogTitle, 
-  DialogContent, 
-  DialogActions, 
-  Button, 
-  TextField, 
-  Grid, 
-  IconButton, 
-  Typography, 
-  Autocomplete 
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  Grid,
+  IconButton,
+  Typography,
+  Autocomplete
 } from '@mui/material';
 import { Add as AddIcon, Remove as RemoveIcon } from '@mui/icons-material';
 import { products } from '../../data/products';
@@ -31,7 +31,7 @@ const OrderModal = ({ open, onClose, onSave, order }) => {
   const handleAddItem = (product) => {
     const existingItem = items.find(item => item.id === product.id);
     if (existingItem) {
-      setItems(items.map(item => 
+      setItems(items.map(item =>
         item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
       ));
     } else {
@@ -44,7 +44,7 @@ const OrderModal = ({ open, onClose, onSave, order }) => {
     if (existingItem.quantity === 1) {
       setItems(items.filter(item => item.id !== productId));
     } else {
-      setItems(items.map(item => 
+      setItems(items.map(item =>
         item.id === productId ? { ...item, quantity: item.quantity - 1 } : item
       ));
     }
@@ -83,7 +83,7 @@ const OrderModal = ({ open, onClose, onSave, order }) => {
           <Grid item xs={12}>
             <Autocomplete
               options={products}
-              getOptionLabel={(option) => `${option.name} - $${option.price.toFixed(2)}`}
+              getOptionLabel={(option) => `${option.name} - Bs ${option.price.toFixed(2)}`}
               onChange={(event, newValue) => {
                 if (newValue) {
                   handleAddItem(newValue);
@@ -109,13 +109,13 @@ const OrderModal = ({ open, onClose, onSave, order }) => {
                   </IconButton>
                 </Grid>
                 <Grid item xs={3} sx={{ textAlign: 'right' }}>
-                  <Typography>${(item.price * item.quantity).toFixed(2)}</Typography>
+                  <Typography>Bs {(item.price * item.quantity).toFixed(2)}</Typography>
                 </Grid>
               </Grid>
             ))}
           </Grid>
           <Grid item xs={12} sx={{ textAlign: 'right', mt: 2 }}>
-            <Typography variant="h5" component="p">Total: ${calculateTotal()}</Typography>
+            <Typography variant="h5" component="p">Total: Bs {calculateTotal()}</Typography>
           </Grid>
         </Grid>
       </DialogContent>

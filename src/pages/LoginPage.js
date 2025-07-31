@@ -17,9 +17,9 @@ import {
   Visibility,
   VisibilityOff
 } from '@mui/icons-material';
-import { useAuth } from './AuthContext';
+import { useAuth } from '../context/AuthContext.js';
 import { useNavigate } from 'react-router-dom';
-import Logo from './Logo';
+import Logo from '../components/common/Logo.js';
 
 const LoginContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
